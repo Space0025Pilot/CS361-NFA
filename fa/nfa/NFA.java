@@ -3,7 +3,6 @@ package fa.nfa;
 import java.util.Set;
 
 import fa.State;
-import fa.nfa.NFAInterface;
 
 public class NFA implements NFAInterface {
 
