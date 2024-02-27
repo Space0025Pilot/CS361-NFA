@@ -4,7 +4,7 @@ package fa.nfa;
 import java.util.Set;
 
 import fa.FAInterface;
-import fa.NFAState;
+import fa.nfa.NFAState;
 
 
 public interface NFAInterface extends FAInterface {

@@ -1,9 +1,9 @@
-package fa;
+package fa.nfa;
 
 import java.util.Set;
 
+import fa.State;
 import fa.nfa.NFAInterface;
-import fa.NFAState;
 
 public class NFA implements NFAInterface {
 
