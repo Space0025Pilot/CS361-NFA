@@ -1,11 +1,40 @@
 package fa.nfa;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import fa.State;
 
 public class NFA implements NFAInterface {
 
+    /* Variables */
+    public LinkedHashSet<NFAState> states;
+    public LinkedHashSet<Character> sigma;
+    public NFAState startState; // KEEP THIS UPDATED WHEN UPDATING STATES
+
+    /**
+     * @author Caitlyn
+     * Constructor for an NFA
+     */
+    public NFA() {
+        this.states = new LinkedHashSet<NFAState>();
+        this.sigma = new LinkedHashSet<Character>();
+        this.startState = null;
+    }
+
+    //Another possible constructor that takes in values(NOT SURE IF NEEDED)
+    public NFA(NFAState start, LinkedHashSet<NFAState> states, LinkedHashSet<Character> sigma) {
+        this.startState = start;
+        this.states = states;
+        this.sigma = sigma;
+    }
+
+    /**
+     * @author TODO
+	 * Adds a a state to the FA instance
+	 * @param name is the label of the state 
+	 * @return true if a new state created successfully and false if there is already state with such name
+	 */
     @Override
     public boolean addState(String name) {
         // TODO Auto-generated method stub
