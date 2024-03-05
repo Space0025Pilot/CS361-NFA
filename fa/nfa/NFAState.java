@@ -1,13 +1,14 @@
 package fa.nfa;
 
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
 
 import fa.State;
 
 public class NFAState extends State {
 
     /* Variables */
-    public Hashtable<String, String[]> transitions;
+    public Hashtable<Character, LinkedHashSet<State>> transitions;
     boolean startState;
     boolean finalState;
 
@@ -18,7 +19,7 @@ public class NFAState extends State {
      */
     public NFAState(String name){
         super.State(name);
-        this.transitions = new Hashtable<String, String[]>();
+        this.transitions = new Hashtable<Character, LinkedHashSet<State>>();
         this.startState = false;
         this.finalState = false;
     }

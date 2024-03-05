@@ -1,7 +1,5 @@
 package fa;
 
-import java.util.Hashtable;
-
 public abstract class State {
 	/**
 	 * The state label.
@@ -10,7 +8,6 @@ public abstract class State {
 	 * @author elenasherman
 	 */
 	private String name;
-	private Hashtable<> transitions;
 	
 	public State() {
 		

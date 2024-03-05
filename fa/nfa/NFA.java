@@ -104,7 +104,7 @@ public class NFA implements NFAInterface {
     }
 
     /**
-     * @author //TODO
+     * @author Olivia Hill
 	 * Simulates a FA on input s to determine
 	 * whether the FA accepts s.
 	 * @param s - the input string
@@ -204,7 +204,7 @@ public class NFA implements NFAInterface {
     }
 
     /**
-     * @author //TODO
+     * @author Olivia Hill
 	 * Determines the maximum number of NFA copies
 	 * created when processing string s
 	 * @param s - the input string
@@ -217,7 +217,7 @@ public class NFA implements NFAInterface {
     }
 
     /**
-     * @author //TODO
+     * @author Olivia Hill
 	 * Adds the transition to the NFA's delta data structure
 	 * @param fromState is the label of the state where the transition starts
 	 * @param toStates is the set of labels of the states where the transition ends
@@ -231,7 +231,7 @@ public class NFA implements NFAInterface {
     }
 
     /**
-     * @author //TODO
+     * @author Olivia Hill
 	 * Determines if NFA is an instance of a DFA
 	 * @return - true if NFA's transition function has DFA's properties.
 	 */
