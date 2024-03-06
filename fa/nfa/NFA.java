@@ -226,8 +226,66 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public boolean addTransition(String fromState, Set<String> toStates, char onSymb) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addTransition'");
+        // Validate sigma &, fromState, and toStates
+        // Assigns from state Ptr
+        NFAState fromStatePtr = null;
+        if (!sigma.contains(onSymb))
+        {
+            return false;
+        }
+        boolean validFromState = false;
+        for (String toState : toStates)
+        {
+            boolean isState = false;
+            for (NFAState state : states)
+            {
+                if (state.getName().equals(toState))
+                {
+                    isState = true;
+                }
+                if (state.getName().equals(fromState))
+                {
+                    validFromState = true;
+                    fromStatePtr = state;
+                }
+            }
+            if (!isState || !validFromState)
+            {
+                return false;
+            }
+        }
+
+        // Add States and onSymb to transition table of fromState
+        if (fromStatePtr.transitions.containsKey(onSymb))
+        {
+            for (String toState : toStates) // Each toState to be added
+            {
+                for (NFAState state : states)
+                {
+                    if (state.getName().equals(toState)) // Find State associated with String toState
+                    {
+                        fromStatePtr.transitions.get(onSymb).add(state); // Will add state if not already present
+                        break;
+                    }
+                }
+            }
+        }
+        else { // Transition on that char doesn't already exist
+            LinkedHashSet<NFAState> toStateSet = null;
+            for (String toState : toStates) // For each toState
+            {
+                for (NFAState state : states)
+                {
+                    if (state.getName().equals(toState)) // Find equivalent NFAState
+                    {
+                        toStateSet.add(state);
+                    }
+                    break;
+                }
+            }
+            fromStatePtr.transitions.put(onSymb, toStateSet); // Add transitions
+        }
+        return true;
     }
 
     /**

@@ -8,7 +8,7 @@ import fa.State;
 public class NFAState extends State {
 
     /* Variables */
-    public Hashtable<Character, LinkedHashSet<State>> transitions;
+    public Hashtable<Character, LinkedHashSet<NFAState>> transitions;
     boolean startState;
     boolean finalState;
 
@@ -19,7 +19,7 @@ public class NFAState extends State {
      */
     public NFAState(String name){
         super.State(name);
-        this.transitions = new Hashtable<Character, LinkedHashSet<State>>();
+        this.transitions = new Hashtable<Character, LinkedHashSet<NFAState>>();
         this.startState = false;
         this.finalState = false;
     }
