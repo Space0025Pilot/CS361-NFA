@@ -8,9 +8,11 @@ import fa.State;
 public class NFA implements NFAInterface {
 
     /* Variables */
-    public LinkedHashSet<NFAState> states;
+    public LinkedHashSet<NFAState> states; // TODO: Should these be public variables?
     public LinkedHashSet<Character> sigma;
     public NFAState startState; // KEEP THIS UPDATED WHEN UPDATING STATES
+    private NFAState statePtr; // This will act as a pointer for tracing paths
+    // This Ptr should be assigned to the start state after each use!!!!
 
     /**
      * @author Caitlyn
@@ -19,12 +21,13 @@ public class NFA implements NFAInterface {
     public NFA() {
         this.states = new LinkedHashSet<NFAState>();
         this.sigma = new LinkedHashSet<Character>();
-        this.startState = null;
+        this.statePtr = this.startState = null;
     }
 
     //Another possible constructor that takes in values(NOT SURE IF NEEDED)
     public NFA(NFAState start, LinkedHashSet<NFAState> states, LinkedHashSet<Character> sigma) {
         this.startState = start;
+        this.statePtr = start;
         this.states = states;
         this.sigma = sigma;
     }
@@ -53,7 +56,7 @@ public class NFA implements NFAInterface {
             NFAState newState = new NFAState(name);
             states.add(newState);
         }
-        return response;
+        return response; // FIXME
     }
 
     /**
@@ -82,12 +85,13 @@ public class NFA implements NFAInterface {
 	 */
     //PLEASE CHECK THIS AGAIN
     @Override
-    public boolean setStart(String name) {
+    public boolean setStart(String name) { // TODO: Needs to make sure a start state does not already exist
         boolean response = false;
         for(NFAState state : states){
             if(name.equals(state.getName())) { 
                 response = true;
                 state.startState = true;
+                statePtr = startState = state;
             }
         }
         return response;
@@ -112,8 +116,37 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public boolean accepts(String s) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'accepts'");
+        // Accepts if we have used all characters, machine is halted, and in final state
+        return acceptHelper(startState, s);
+    }
+
+    private boolean acceptHelper(NFAState currState, String s)
+    {
+        if (s.equals(null))
+        {
+            if (currState.finalState)
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if (currState.transitions.get(s.charAt(0)) == null)
+        {
+            return false;
+        }
+
+        for (NFAState state : currState.transitions.get(s.charAt(0))) // Each state we can travel to
+        {
+            NFAState nextState = state;
+
+            if (acceptHelper(nextState, s.substring(1)))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -227,8 +260,7 @@ public class NFA implements NFAInterface {
     @Override
     public boolean addTransition(String fromState, Set<String> toStates, char onSymb) {
         // Validate sigma &, fromState, and toStates
-        // Assigns from state Ptr
-        NFAState fromStatePtr = null;
+
         if (!sigma.contains(onSymb))
         {
             return false;
@@ -246,7 +278,7 @@ public class NFA implements NFAInterface {
                 if (state.getName().equals(fromState))
                 {
                     validFromState = true;
-                    fromStatePtr = state;
+                    statePtr = state;
                 }
             }
             if (!isState || !validFromState)
@@ -256,7 +288,7 @@ public class NFA implements NFAInterface {
         }
 
         // Add States and onSymb to transition table of fromState
-        if (fromStatePtr.transitions.containsKey(onSymb))
+        if (statePtr.transitions.containsKey(onSymb))
         {
             for (String toState : toStates) // Each toState to be added
             {
@@ -264,7 +296,7 @@ public class NFA implements NFAInterface {
                 {
                     if (state.getName().equals(toState)) // Find State associated with String toState
                     {
-                        fromStatePtr.transitions.get(onSymb).add(state); // Will add state if not already present
+                        statePtr.transitions.get(onSymb).add(state); // Will add state if not already present
                         break;
                     }
                 }
@@ -283,8 +315,9 @@ public class NFA implements NFAInterface {
                     break;
                 }
             }
-            fromStatePtr.transitions.put(onSymb, toStateSet); // Add transitions
+            statePtr.transitions.put(onSymb, toStateSet); // Add transitions
         }
+        statePtr = startState; // reassign to start
         return true;
     }
 
@@ -295,8 +328,8 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public boolean isDFA() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isDFA'");
+
+        return false;
     }
     
 }
