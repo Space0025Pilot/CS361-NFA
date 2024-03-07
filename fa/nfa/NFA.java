@@ -166,7 +166,7 @@ public class NFA implements NFAInterface {
 	 * @return state object or null
 	 */
     @Override
-    public State getState(String name) {
+    public NFAState getState(String name) {
         NFAState choosenState = null;
         for(NFAState state : states){
             if(name.equals(state.getName())){
