@@ -117,12 +117,16 @@ public class NFA implements NFAInterface {
     @Override
     public boolean accepts(String s) {
         // Accepts if we have used all characters, machine is halted, and in final state
+        if (s.equals("e"))
+        {
+            s = "";
+        }
         return acceptHelper(startState, s);
     }
 
     private boolean acceptHelper(NFAState currState, String s)
     {
-        if (s.equals(null))
+        if (s.equals(null) || s.equals(""))
         {
             if (currState.finalState)
             {
@@ -132,25 +136,42 @@ public class NFA implements NFAInterface {
                 return false;
             }
         }
-        if (currState.transitions.get(s.charAt(0)) == null)
+        try
+        {
+            currState.transitions.get(s.charAt(0));
+        } catch (IndexOutOfBoundsException ioobe)
         {
             return false;
         }
 
-        for (NFAState state : currState.transitions.get(s.charAt(0))) // Each state we can travel to
+
+        try
         {
-            if (acceptHelper(state, s.substring(1)))
+            for (NFAState state : currState.transitions.get(s.charAt(0))) // Each state we can travel to
             {
-                return true;
+                if (acceptHelper(state, s.substring(1)))
+                {
+                    return true;
+                }
             }
+        } catch (NullPointerException npe)
+        {
+
         }
 
-        for (NFAState state : currState.transitions.get('e'))
+
+        try
         {
-            if (acceptHelper(state, s))
+            for (NFAState state : currState.transitions.get('e'))
             {
-                return true;
+                if (acceptHelper(state, s))
+                {
+                    return true;
+                }
             }
+        } catch (NullPointerException npe)
+        {
+            return false;
         }
 
         return false;
@@ -318,8 +339,9 @@ public class NFA implements NFAInterface {
                     if (state.getName().equals(toState)) // Find equivalent NFAState
                     {
                         toStateSet.add(state);
+                        break;
                     }
-                    break;
+
                 }
             }
             statePtr.transitions.put(onSymb, toStateSet); // Add transitions
