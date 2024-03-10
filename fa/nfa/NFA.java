@@ -3,16 +3,15 @@ package fa.nfa;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import fa.State;
-
 public class NFA implements NFAInterface {
 
     /* Variables */
-    public LinkedHashSet<NFAState> states; // TODO: Should these be public variables?
-    public LinkedHashSet<Character> sigma;
+    private LinkedHashSet<NFAState> states; // TODO: Should these be public variables? I did change them so will keep this note here incase it causes issues.
+    private LinkedHashSet<Character> sigma;
     public NFAState startState; // KEEP THIS UPDATED WHEN UPDATING STATES
     private NFAState statePtr; // This will act as a pointer for tracing paths
     // This Ptr should be assigned to the start state after each use!!!!
+    private Set<NFAState> set; //Provides a return set for gettostate and eclosure.
 
     /**
      * @author Caitlyn
@@ -239,7 +238,7 @@ public class NFA implements NFAInterface {
     }
 
     /**
-     * @author //TODO
+     * @author Caitlyn
 	 * Return delta entries
 	 * @param from - the source state
 	 * @param onSymb - the label of the transition
@@ -247,12 +246,16 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public Set<NFAState> getToState(NFAState from, char onSymb) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getToState'");
+        set = null;
+        if(from.transitions.containsKey(onSymb)){
+            set = from.transitions.get(onSymb);
+        }
+
+        return set;
     }
 
     /**
-     * @author //TODO
+     * @author Caitlyn
 	 * Traverses all epsilon transitions and determine
 	 * what states can be reached from s through e
 	 * @param s
@@ -260,8 +263,13 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public Set<NFAState> eClosure(NFAState s) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'eClosure'");
+        if(s.transitions.containsKey('e') && !set.contains(s)){
+            set.add(s);
+            for(NFAState state : s.transitions.get('e')){
+                eClosure(state);
+            }
+        }
+        return set;
     }
 
     /**
