@@ -139,13 +139,20 @@ public class NFA implements NFAInterface {
 
         for (NFAState state : currState.transitions.get(s.charAt(0))) // Each state we can travel to
         {
-            NFAState nextState = state;
-
-            if (acceptHelper(nextState, s.substring(1)))
+            if (acceptHelper(state, s.substring(1)))
             {
                 return true;
             }
         }
+
+        for (NFAState state : currState.transitions.get('e'))
+        {
+            if (acceptHelper(state, s))
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -261,7 +268,7 @@ public class NFA implements NFAInterface {
     public boolean addTransition(String fromState, Set<String> toStates, char onSymb) {
         // Validate sigma &, fromState, and toStates
 
-        if (!sigma.contains(onSymb))
+        if (!sigma.contains(onSymb) && (onSymb != 'e'))
         {
             return false;
         }
@@ -303,7 +310,7 @@ public class NFA implements NFAInterface {
             }
         }
         else { // Transition on that char doesn't already exist
-            LinkedHashSet<NFAState> toStateSet = null;
+            LinkedHashSet<NFAState> toStateSet = new LinkedHashSet<NFAState>();
             for (String toState : toStates) // For each toState
             {
                 for (NFAState state : states)
