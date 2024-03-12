@@ -342,12 +342,11 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public boolean addTransition(String fromState, Set<String> toStates, char onSymb) {
-        // Validate sigma &, fromState, and toStates
+        // Validate sigma, fromState, and toStates
         if (!sigma.contains(onSymb) && (onSymb != 'e'))
         {
             return false;
         }
-
         NFAState statePtr = startState;
         boolean validFromState = false;
         for (String toState : toStates)
@@ -362,7 +361,7 @@ public class NFA implements NFAInterface {
                 if (state.getName().equals(fromState))
                 {
                     validFromState = true;
-                    statePtr = state;
+                    statePtr = state;  // Sets our ptr to the fromState state
                 }
             }
             if (!isState || !validFromState)
@@ -372,7 +371,7 @@ public class NFA implements NFAInterface {
         }
 
         // Add States and onSymb to transition table of fromState
-        if (statePtr.transitions.containsKey(onSymb))
+        if (statePtr.transitions.containsKey(onSymb)) // Key for transition on that symb already exists
         {
             for (String toState : toStates) // Each toState to be added
             {
@@ -383,10 +382,11 @@ public class NFA implements NFAInterface {
                         statePtr.transitions.get(onSymb).add(state); // Will add state if not already present
                         break;
                     }
+                    // TODO: Check for state in set that's not in our nfa? what to do if that happens...
                 }
             }
         }
-        else { // Transition on that char doesn't already exist
+        else { // Transition on that symb doesn't already exist
             LinkedHashSet<NFAState> toStateSet = new LinkedHashSet<NFAState>();
             for (String toState : toStates) // For each toState
             {
@@ -397,12 +397,11 @@ public class NFA implements NFAInterface {
                         toStateSet.add(state);
                         break;
                     }
-
+                    // TODO: Check for if toState isn't in our state set? ^
                 }
             }
             statePtr.transitions.put(onSymb, toStateSet); // Add transitions
         }
-        statePtr = startState; // reassign to start
         return true;
     }
 
@@ -413,7 +412,8 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public boolean isDFA() {
-        // Needs no epsilon transitions, and max of 1 toState per symbol
+        // Has no epsilon transitions, and max of 1 toState per symbol
+        // TODO: Any other requirements?
         for (NFAState state : states)
         {
             if (state.transitions.containsKey('e')) // If there are epsilon transitions
@@ -428,6 +428,6 @@ public class NFA implements NFAInterface {
                 }
             }
         }
-        return true;
+        return true; // TODO: Is default true best options/practice...
     }
 }
