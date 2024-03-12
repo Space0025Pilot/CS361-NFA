@@ -153,10 +153,7 @@ public class NFA implements NFAInterface {
                     return true;
                 }
             }
-        } catch (NullPointerException npe)
-        {
-
-        }
+        } catch (NullPointerException npe) {}
 
 
         try
@@ -168,10 +165,7 @@ public class NFA implements NFAInterface {
                     return true;
                 }
             }
-        } catch (NullPointerException npe)
-        {
-            return false;
-        }
+        } catch (NullPointerException npe) {}
 
         return false;
     }
@@ -281,8 +275,56 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public int maxCopies(String s) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'maxCopies'");
+        if(startState == null)
+        {
+            return 0;
+        }
+        LinkedHashSet<NFAState> startSet = new LinkedHashSet<NFAState>();
+        startSet.add(startState);
+        return maxCopiesHelper(startSet, s);
+    }
+
+    private int maxCopiesHelper(LinkedHashSet<NFAState> stateSet, String s)
+    {
+        // TODO: epsilon transition is counted on level where it's immediately possible
+        LinkedHashSet<NFAState> nextLevel = new LinkedHashSet<NFAState>();
+        int levelCount = 0;
+        for (NFAState state : stateSet)
+        {
+            try
+            {
+                for (NFAState toState : state.transitions.get(s.charAt(0)))
+                {
+                    nextLevel.add(toState);
+                    levelCount++;
+                }
+            } catch (NullPointerException npe)
+            {
+
+            }
+            try {
+                // TODO: Maybe here loop through next states e transitions?
+                for (NFAState toEState : state.transitions.get('e'))
+                {
+                    nextLevel.add(toEState);
+                    levelCount++;
+                }
+            } catch (NullPointerException npe)
+            {
+
+            }
+
+        }
+        int nextLevelCount = 0;
+        try
+        {
+            nextLevelCount = maxCopiesHelper(nextLevel, s.substring(1));
+        } catch (IndexOutOfBoundsException ioobe)
+        {
+
+        }
+
+        return (nextLevelCount > levelCount) ? nextLevelCount : levelCount; // This works right?
     }
 
     /**
