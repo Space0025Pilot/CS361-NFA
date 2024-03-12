@@ -112,6 +112,7 @@ public class NFA implements NFAInterface {
     @Override
     public boolean accepts(String s) {
         // Accepts if we have used all characters, machine is halted, and in final state
+        // TODO: requirements for machine having been halted?
         if (s.equals("e"))
         {
             s = "";
@@ -120,26 +121,32 @@ public class NFA implements NFAInterface {
     }
 
     // TODO: explain why I used depth first search and how I would have used breadth first search
+    /**
+     * @author Olivia Hill
+     * @param currState Current state recursively being looked at
+     * @param s Input string
+     * @return boolean true if NFA accepts String s
+     */
     private boolean acceptHelper(NFAState currState, String s)
     {
+        // FIXME catch statement warnings
         if (s.isEmpty())
         {
             return currState.finalState;
         }
         try
         {
-            currState.transitions.get(s.charAt(0));
+            currState.transitions.get(s.charAt(0)); // TODO: Is this chunk necessary now?
         } catch (IndexOutOfBoundsException ioobe)
         {
             return false;
         }
 
-
         try
         {
             for (NFAState state : currState.transitions.get(s.charAt(0))) // Each state we can travel to
             {
-                if (acceptHelper(state, s.substring(1)))
+                if (acceptHelper(state, s.substring(1))) // If at any end we are in a final state
                 {
                     return true;
                 }
@@ -149,16 +156,16 @@ public class NFA implements NFAInterface {
 
         try
         {
-            for (NFAState state : currState.transitions.get('e'))
+            for (NFAState state : currState.transitions.get('e')) // For each state we can get to on epsilon
             {
-                if (acceptHelper(state, s))
+                if (acceptHelper(state, s)) // Call other state without using strings for epsilon transitions
                 {
                     return true;
                 }
             }
         } catch (NullPointerException npe) {}
 
-        return false;
+        return false; // No paths past this state have returned an end in final state
     }
 
     /**
@@ -198,7 +205,7 @@ public class NFA implements NFAInterface {
     public boolean isFinal(String name) {
         boolean response = false;
         for(NFAState state : states){
-            if(name.equals(state.getName()) && state.finalState == true){
+            if(name.equals(state.getName()) && state.finalState == true){ // TODO: can fix warning here
                 response = true;
             }
         }
@@ -215,7 +222,7 @@ public class NFA implements NFAInterface {
     public boolean isStart(String name) { // TODO: Should we validate start state attribute?
         boolean response = false;
         for(NFAState state : states){
-            if(name.equals(state.getName()) && state.startState == true){
+            if(name.equals(state.getName()) && state.startState == true){ // TODO: can fix warning here
                 response = true;
             }
         }
@@ -286,17 +293,17 @@ public class NFA implements NFAInterface {
         }
         LinkedHashSet<NFAState> startSet = new LinkedHashSet<NFAState>();
         startSet.add(startState);
+        for (NFAState state : eClosure(startState))
+        {
+            startSet.add(state);
+        }
         return maxCopiesHelper(startSet, s);
     }
 
     private int maxCopiesHelper(LinkedHashSet<NFAState> stateSet, String s) // TODO: handle warnings
     {
         LinkedHashSet<NFAState> nextLevel = new LinkedHashSet<NFAState>();
-        int levelCount = 0;
-        for (NFAState state : stateSet) // Adds all states we can get to without consuming any characters
-        {
-            stateSet.addAll(eClosure(state));
-        }
+        int levelCount = stateSet.size();
 
         for (NFAState state : stateSet)
         {
@@ -304,33 +311,22 @@ public class NFA implements NFAInterface {
             {
                 for (NFAState toState : state.transitions.get(s.charAt(0)))
                 {
-                    nextLevel.add(toState);
-                    levelCount++;
+                    nextLevel.addAll(eClosure(toState)); // Adds toState on symb and all states reachable by epsilon
+                    // TODO: Make sure it doesn't all duplicates
                 }
             } catch (NullPointerException npe)
             {
-
-            }
-            try {
-                // TODO: Maybe here loop through next states e transitions?
-                for (NFAState toEState : state.transitions.get('e'))
-                {
-                    nextLevel.add(toEState);
-                    levelCount++;
-                }
-            } catch (NullPointerException npe)
-            {
-
+                // TODO is this an issue?
             }
 
         }
-        int nextLevelCount = 0;
+        int nextLevelCount = nextLevel.size();
         try
         {
             nextLevelCount = maxCopiesHelper(nextLevel, s.substring(1));
         } catch (IndexOutOfBoundsException ioobe)
         {
-
+            // TODO: Need anything here?
         }
 
         return (nextLevelCount > levelCount) ? nextLevelCount : levelCount; // This works right?
