@@ -267,7 +267,7 @@ public class NFA implements NFAInterface {
         if(s.transitions.containsKey('e')){
             for(NFAState state : s.transitions.get('e')){
                 set.add(state);
-                eClosure(state);
+                eClosureHelper(set, state);
             }
         }
         return set;
