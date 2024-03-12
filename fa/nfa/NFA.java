@@ -11,7 +11,7 @@ public class NFA implements NFAInterface {
     public NFAState startState; // KEEP THIS UPDATED WHEN UPDATING STATES
     private NFAState statePtr; // This will act as a pointer for tracing paths
     // This Ptr should be assigned to the start state after each use!!!!
-    private Set<NFAState> set; //Provides a return set for gettostate and eclosure.
+    // private Set<NFAState> set = new LinkedHashSet<>(); //Provides a return set for gettostate and eclosure.
 
     /**
      * @author Caitlyn
@@ -235,7 +235,7 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public Set<NFAState> getToState(NFAState from, char onSymb) { // FIXME: Needs to include epsilon transitions/eclosure states
-        set = null;
+        Set<NFAState> set = new LinkedHashSet<>();
         if(from.transitions.containsKey(onSymb)){
             set = from.transitions.get(onSymb);
         }
@@ -252,9 +252,23 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public Set<NFAState> eClosure(NFAState s) {
-        if(s.transitions.containsKey('e') && !set.contains(s)){
-            set.add(s);
+        Set<NFAState> set = new LinkedHashSet<>();
+        set = eClosureHelper(set, s);
+        return set;
+        
+    }
+    /** //TODO FIX DOC HERE
+     * @author Caitlyn
+	 * Traverses all epsilon transitions and determine
+	 * what states can be reached from s through e
+	 * @param s
+	 * @return set of states that can be reached from s on epsilon trans.
+	 */
+    public Set<NFAState> eClosureHelper(Set<NFAState> set, NFAState s) {
+        set.add(s);
+        if(s.transitions.containsKey('e')){
             for(NFAState state : s.transitions.get('e')){
+                set.add(state);
                 eClosure(state);
             }
         }
