@@ -55,7 +55,7 @@ public class NFA implements NFAInterface {
             NFAState newState = new NFAState(name);
             states.add(newState);
         }
-        return response; // FIXME
+        return response;
     }
 
     /**
@@ -123,17 +123,12 @@ public class NFA implements NFAInterface {
         return acceptHelper(startState, s);
     }
 
+    // TODO: explain why I used depth first search and how I would have used breadth first search
     private boolean acceptHelper(NFAState currState, String s)
     {
-        if (s.equals(null) || s.equals(""))
+        if (s.isEmpty())
         {
-            if (currState.finalState)
-            {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return currState.finalState;
         }
         try
         {
@@ -221,7 +216,7 @@ public class NFA implements NFAInterface {
 	 * @return true if a state with that name exists and it is the start state
 	 */
     @Override
-    public boolean isStart(String name) {
+    public boolean isStart(String name) { // TODO: Should we validate start state attribute?
         boolean response = false;
         for(NFAState state : states){
             if(name.equals(state.getName()) && state.startState == true){
@@ -239,7 +234,7 @@ public class NFA implements NFAInterface {
 	 * @return a set of sink states
 	 */
     @Override
-    public Set<NFAState> getToState(NFAState from, char onSymb) {
+    public Set<NFAState> getToState(NFAState from, char onSymb) { // FIXME: Needs to include epsilon transitions/eclosure states
         set = null;
         if(from.transitions.containsKey(onSymb)){
             set = from.transitions.get(onSymb);
@@ -284,11 +279,15 @@ public class NFA implements NFAInterface {
         return maxCopiesHelper(startSet, s);
     }
 
-    private int maxCopiesHelper(LinkedHashSet<NFAState> stateSet, String s)
+    private int maxCopiesHelper(LinkedHashSet<NFAState> stateSet, String s) // TODO: handle warnings
     {
-        // TODO: epsilon transition is counted on level where it's immediately possible
         LinkedHashSet<NFAState> nextLevel = new LinkedHashSet<NFAState>();
         int levelCount = 0;
+        for (NFAState state : stateSet) // Adds all states we can get to without consuming any characters
+        {
+            stateSet.addAll(eClosure(state));
+        }
+
         for (NFAState state : stateSet)
         {
             try
@@ -338,11 +337,11 @@ public class NFA implements NFAInterface {
     @Override
     public boolean addTransition(String fromState, Set<String> toStates, char onSymb) {
         // Validate sigma &, fromState, and toStates
-
         if (!sigma.contains(onSymb) && (onSymb != 'e'))
         {
             return false;
         }
+
         boolean validFromState = false;
         for (String toState : toStates)
         {
