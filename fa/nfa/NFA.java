@@ -237,7 +237,6 @@ public class NFA implements NFAInterface {
         if(from.transitions.containsKey(onSymb)){
             set = from.transitions.get(onSymb);
         }
-
         return set;
     }
 
@@ -255,10 +254,11 @@ public class NFA implements NFAInterface {
         return set;
         
     }
-    /** //TODO FIX DOC HERE
+    /**
      * @author Caitlyn
 	 * Traverses all epsilon transitions and determine
 	 * what states can be reached from s through e
+     * @param set
 	 * @param s
 	 * @return set of states that can be reached from s on epsilon trans.
 	 */
