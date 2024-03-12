@@ -1,6 +1,7 @@
 package fa.nfa;
 
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class NFA implements NFAInterface {
@@ -9,9 +10,7 @@ public class NFA implements NFAInterface {
     private LinkedHashSet<NFAState> states; // TODO: Should these be public variables? I did change them so will keep this note here incase it causes issues.
     private LinkedHashSet<Character> sigma;
     public NFAState startState; // KEEP THIS UPDATED WHEN UPDATING STATES
-    private NFAState statePtr; // This will act as a pointer for tracing paths
-    // This Ptr should be assigned to the start state after each use!!!!
-    // private Set<NFAState> set = new LinkedHashSet<>(); //Provides a return set for gettostate and eclosure.
+    private Set<NFAState> set; //Provides a return set for gettostate and eclosure.
 
     /**
      * @author Caitlyn
@@ -20,13 +19,12 @@ public class NFA implements NFAInterface {
     public NFA() {
         this.states = new LinkedHashSet<NFAState>();
         this.sigma = new LinkedHashSet<Character>();
-        this.statePtr = this.startState = null;
+        this.startState = null;
     }
 
     //Another possible constructor that takes in values(NOT SURE IF NEEDED)
     public NFA(NFAState start, LinkedHashSet<NFAState> states, LinkedHashSet<Character> sigma) {
         this.startState = start;
-        this.statePtr = start;
         this.states = states;
         this.sigma = sigma;
     }
@@ -90,7 +88,7 @@ public class NFA implements NFAInterface {
             if(name.equals(state.getName())) { 
                 response = true;
                 state.startState = true;
-                statePtr = startState = state;
+                startState = state;
             }
         }
         return response;
@@ -356,6 +354,7 @@ public class NFA implements NFAInterface {
             return false;
         }
 
+        NFAState statePtr = startState;
         boolean validFromState = false;
         for (String toState : toStates)
         {
@@ -420,8 +419,21 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public boolean isDFA() {
-
-        return false;
+        // Needs no epsilon transitions, and max of 1 toState per symbol
+        for (NFAState state : states)
+        {
+            if (state.transitions.containsKey('e')) // If there are epsilon transitions
+            {
+                return false;
+            }
+            for (Character key : state.transitions.keySet()) // for every transition
+            {
+                if (state.transitions.get(key).size() > 1) // If there are transitions with multiple to states
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
-    
 }
