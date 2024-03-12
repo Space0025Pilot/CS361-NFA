@@ -1,6 +1,7 @@
 package fa.nfa;
 
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class NFA implements NFAInterface {
@@ -406,8 +407,21 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public boolean isDFA() {
-
-        return false;
+        // Needs no epsilon transitions, and max of 1 toState per symbol
+        for (NFAState state : states)
+        {
+            if (state.transitions.containsKey('e')) // If there are epsilon transitions
+            {
+                return false;
+            }
+            for (Character key : state.transitions.keySet()) // for every transition
+            {
+                if (state.transitions.get(key).size() > 1) // If there are transitions with multiple to states
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
-    
 }
