@@ -7,7 +7,6 @@ import java.util.Set;
 import org.junit.Test;
 
 import fa.nfa.NFA;
-import fa.nfa.NFAState;
 
 public class NFATest {
 	

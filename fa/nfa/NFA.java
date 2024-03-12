@@ -1,7 +1,6 @@
 package fa.nfa;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class NFA implements NFAInterface {
@@ -10,7 +9,6 @@ public class NFA implements NFAInterface {
     private LinkedHashSet<NFAState> states; // TODO: Should these be public variables? I did change them so will keep this note here incase it causes issues.
     private LinkedHashSet<Character> sigma;
     public NFAState startState; // KEEP THIS UPDATED WHEN UPDATING STATES
-    private Set<NFAState> set; //Provides a return set for gettostate and eclosure.
 
     /**
      * @author Caitlyn
@@ -232,10 +230,10 @@ public class NFA implements NFAInterface {
 	 * @return a set of sink states
 	 */
     @Override
-    public Set<NFAState> getToState(NFAState from, char onSymb) { // FIXME: Needs to include epsilon transitions/eclosure states
-        Set<NFAState> set = new LinkedHashSet<>();
-        if(from.transitions.containsKey(onSymb)){
-            set = from.transitions.get(onSymb);
+    public Set<NFAState> getToState(NFAState from, char onSymb) {
+        Set<NFAState> set = new LinkedHashSet<>();                //PROBLEM SOLVED NOW THAT I WANT TO PULL MY HAIR OUT
+        for(NFAState state: eClosure(from)) {
+            set.addAll(state.transitions.get(onSymb));
         }
         return set;
     }
