@@ -78,9 +78,8 @@ public class NFA implements NFAInterface {
 	 * @param name is the label of the start state
 	 * @return true if successful and false if no state with such name exists
 	 */
-    //PLEASE CHECK THIS AGAIN
     @Override
-    public boolean setStart(String name) { // TODO: Needs to make sure a start state does not already exist
+    public boolean setStart(String name) {
         boolean response = false;
         for(NFAState state : states){
             if(name.equals(state.getName())) { 
@@ -93,7 +92,7 @@ public class NFA implements NFAInterface {
     }
 
     /**
-     * @author //TODO
+     * @author Caitlyn
 	 * Adds a symbol to Sigma
 	 * @param symbol to add to the alphabet set
 	 */
