@@ -20,13 +20,6 @@ public class NFA implements NFAInterface {
         this.startState = null;
     }
 
-    //Another possible constructor that takes in values(NOT SURE IF NEEDED)
-    public NFA(NFAState start, LinkedHashSet<NFAState> states, LinkedHashSet<Character> sigma) {
-        this.startState = start;
-        this.states = states;
-        this.sigma = sigma;
-    }
-
     /**
      * @author Caitlyn
 	 * Adds a a state to the FA instance
@@ -236,7 +229,7 @@ public class NFA implements NFAInterface {
 	 * @return true if a state with that name exists and it is the start state
 	 */
     @Override
-    public boolean isStart(String name) { // TODO: Validate start state attribute
+    public boolean isStart(String name) {
         boolean response = false;
         for(NFAState state : states){
             if(name.equals(state.getName()) && state.startState){
@@ -342,6 +335,7 @@ public class NFA implements NFAInterface {
         } catch (IndexOutOfBoundsException ioobe) {}
 
         return (nextLevelCount > levelCount) ? nextLevelCount : levelCount; // This works right? I didn't know java did this
+                                                                            // Yes it is the conditional/ternary operator! It's magic!! - C 
     }
 
     /**
@@ -395,6 +389,7 @@ public class NFA implements NFAInterface {
                         break;
                     }
                     // TODO: Check for state in set that's not in our nfa? what to do if that happens...
+                    // Put it up in a hotel and tell it to wait for security clearance! - C
                 }
             }
         }
