@@ -74,11 +74,18 @@ public class NFA implements NFAInterface {
     @Override
     public boolean setStart(String name) {
         boolean response = false;
-        for(NFAState state : states){
-            if(name.equals(state.getName())) { 
+        for (NFAState state : states) {
+            if (name.equals(state.getName())) {
                 response = true;
                 state.startState = true;
                 startState = state;
+            }
+        }
+        for (NFAState state : states)
+        {
+            if (!state.getName().equals(name) && state.startState && (state != startState))
+            {
+                state.startState = false;
             }
         }
         return response;
