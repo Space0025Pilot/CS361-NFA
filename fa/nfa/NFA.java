@@ -6,9 +6,9 @@ import java.util.Set;
 public class NFA implements NFAInterface {
 
     /* Variables */
-    private LinkedHashSet<NFAState> states; // TODO: Should these be public variables? I did change them so will keep this note here incase it causes issues.
+    private LinkedHashSet<NFAState> states;
     private LinkedHashSet<Character> sigma;
-    public NFAState startState; // KEEP THIS UPDATED WHEN UPDATING STATES
+    public NFAState startState;
 
     /**
      * @author Caitlyn
@@ -28,7 +28,7 @@ public class NFA implements NFAInterface {
     }
 
     /**
-     * @author //TODO
+     * @author Caitlyn
 	 * Adds a a state to the FA instance
 	 * @param name is the label of the state 
 	 * @return true if a new state created successfully and false if there is already state with such name
@@ -110,8 +110,7 @@ public class NFA implements NFAInterface {
 	 */
     @Override
     public boolean accepts(String s) {
-        // Accepts if we have used all characters, machine is halted, and in final state
-        // TODO: requirements for machine having been halted?
+        // Accepts if we have used all characters, machine is halted?, and in final state
         if (s.equals("e"))
         {
             s = "";
@@ -119,7 +118,27 @@ public class NFA implements NFAInterface {
         return acceptHelper(startState, s);
     }
 
-    // TODO: explain why I used depth first search and how I would have used breadth first search
+    /*
+    DR FROST!!! README DR FROST!!!
+    I hope grading hasn't been too exhausting/boring. As you requested I am writing
+    as to why I used depth first search here rather than breadth first search. To be
+    completely candid, I did not realize I was supposed to use breadth first search.
+    I'm not even sure I read the handout because I was just excited to code.
+    I knew I wanted to use recursion because after thinking through what it would
+    look like to implement iteratively I was disgusted. Like ew, absolutely not.
+    Then I guess I just sort of free-styled from there thinking about what the base
+    case would look like, and worked backwards from there. I think I landed on
+    depth first search because I thought it was cooler/sleeker and harder to
+    implement, which I thought sounded more fun to do and worth exploring to
+    challenge myself.
+    Writing it with breadth first search would have been more intuitive to code,
+    and it was when I used breadth first search in maxCopies. And that's exactly
+    how I would implement it for accepts as well.
+    I hope this was an interesting insight into the thought process of a
+    neurodivergent student.
+    Happy grading!
+    */
+
     /**
      * @author Olivia Hill
      * @param currState Current state recursively being looked at
@@ -135,7 +154,7 @@ public class NFA implements NFAInterface {
         }
         try
         {
-            currState.transitions.get(s.charAt(0)); // TODO: Is this chunk necessary now?
+            currState.transitions.get(s.charAt(0));
         } catch (IndexOutOfBoundsException ioobe)
         {
             return false;
@@ -151,7 +170,6 @@ public class NFA implements NFAInterface {
                 }
             }
         } catch (NullPointerException npe) {}
-
 
         try
         {
@@ -204,7 +222,7 @@ public class NFA implements NFAInterface {
     public boolean isFinal(String name) {
         boolean response = false;
         for(NFAState state : states){
-            if(name.equals(state.getName()) && state.finalState == true){ // TODO: can fix warning here
+            if(name.equals(state.getName()) && state.finalState){
                 response = true;
             }
         }
@@ -218,10 +236,10 @@ public class NFA implements NFAInterface {
 	 * @return true if a state with that name exists and it is the start state
 	 */
     @Override
-    public boolean isStart(String name) { // TODO: Should we validate start state attribute?
+    public boolean isStart(String name) { // TODO: Validate start state attribute
         boolean response = false;
         for(NFAState state : states){
-            if(name.equals(state.getName()) && state.startState == true){ // TODO: can fix warning here
+            if(name.equals(state.getName()) && state.startState){
                 response = true;
             }
         }
@@ -238,7 +256,7 @@ public class NFA implements NFAInterface {
     @Override
     public Set<NFAState> getToState(NFAState from, char onSymb) {
         Set<NFAState> set = new LinkedHashSet<>();                //PROBLEM SOLVED NOW THAT I WANT TO PULL MY HAIR OUT
-        for(NFAState state: eClosure(from)) {
+        for(NFAState state: eClosure(from)) {                       // I am proud of you Caitlyn - Liv
             set.addAll(state.transitions.get(onSymb));
         }
         return set;
@@ -258,6 +276,7 @@ public class NFA implements NFAInterface {
         return set;
         
     }
+
     /**
      * @author Caitlyn
 	 * Traverses all epsilon transitions and determine
@@ -299,7 +318,7 @@ public class NFA implements NFAInterface {
         return maxCopiesHelper(startSet, s);
     }
 
-    private int maxCopiesHelper(LinkedHashSet<NFAState> stateSet, String s) // TODO: handle warnings
+    private int maxCopiesHelper(LinkedHashSet<NFAState> stateSet, String s) // So many silly warnings
     {
         LinkedHashSet<NFAState> nextLevel = new LinkedHashSet<NFAState>();
         int levelCount = stateSet.size();
@@ -313,22 +332,16 @@ public class NFA implements NFAInterface {
                     nextLevel.addAll(eClosure(toState)); // Adds toState on symb and all states reachable by epsilon
                     // TODO: Make sure it doesn't all duplicates
                 }
-            } catch (NullPointerException npe)
-            {
-                // TODO is this an issue?
-            }
+            } catch (NullPointerException npe) {}
 
         }
         int nextLevelCount = nextLevel.size();
         try
         {
             nextLevelCount = maxCopiesHelper(nextLevel, s.substring(1));
-        } catch (IndexOutOfBoundsException ioobe)
-        {
-            // TODO: Need anything here?
-        }
+        } catch (IndexOutOfBoundsException ioobe) {}
 
-        return (nextLevelCount > levelCount) ? nextLevelCount : levelCount; // This works right?
+        return (nextLevelCount > levelCount) ? nextLevelCount : levelCount; // This works right? I didn't know java did this
     }
 
     /**
@@ -412,7 +425,6 @@ public class NFA implements NFAInterface {
     @Override
     public boolean isDFA() {
         // Has no epsilon transitions, and max of 1 toState per symbol
-        // TODO: Any other requirements?
         for (NFAState state : states)
         {
             if (state.transitions.containsKey('e')) // If there are epsilon transitions
@@ -427,6 +439,6 @@ public class NFA implements NFAInterface {
                 }
             }
         }
-        return true; // TODO: Is default true best options/practice...
+        return true;
     }
 }
