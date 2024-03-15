@@ -6,8 +6,8 @@ import java.util.Set;
 public class NFA implements NFAInterface {
 
     /* Variables */
-    private LinkedHashSet<NFAState> states;
-    private LinkedHashSet<Character> sigma;
+    private final LinkedHashSet<NFAState> states;
+    private final LinkedHashSet<Character> sigma;
     public NFAState startState;
 
     /**
@@ -22,7 +22,7 @@ public class NFA implements NFAInterface {
 
     /**
      * @author Caitlyn
-	 * Adds a a state to the FA instance
+	 * Adds a state to the FA instance
 	 * @param name is the label of the state 
 	 * @return true if a new state created successfully and false if there is already state with such name
 	 */
@@ -30,7 +30,7 @@ public class NFA implements NFAInterface {
     public boolean addState(String name) {
         boolean response = false;
 
-        if(states.size() == 0){
+        if(states.isEmpty()){
             response = true;
             NFAState newState = new NFAState(name);
             states.add(newState);
@@ -83,7 +83,7 @@ public class NFA implements NFAInterface {
         }
         for (NFAState state : states)
         {
-            if (!state.getName().equals(name) && state.startState && (state != startState))
+            if ((state != startState) && state.startState)
             {
                 state.startState = false;
             }
@@ -141,30 +141,25 @@ public class NFA implements NFAInterface {
 
     /**
      * @author Olivia Hill
+     * Recursive portions of the accepts method
      * @param currState Current state recursively being looked at
      * @param s Input string
      * @return boolean true if NFA accepts String s
      */
     private boolean acceptHelper(NFAState currState, String s)
     {
-        // FIXME catch statement warnings
+        // Base case
         if (s.isEmpty())
         {
             return currState.finalState;
         }
-        try
-        {
-            currState.transitions.get(s.charAt(0));
-        } catch (IndexOutOfBoundsException ioobe)
-        {
-            return false;
-        }
 
+        // Recursive part
         try
         {
-            for (NFAState state : currState.transitions.get(s.charAt(0))) // Each state we can travel to
+            for (NFAState state : currState.transitions.get(s.charAt(0))) // Each state we can travel to on symb
             {
-                if (acceptHelper(state, s.substring(1))) // If at any end we are in a final state
+                if (acceptHelper(state, s.substring(1))) // If at any end later we are in a final state...
                 {
                     return true;
                 }
@@ -175,7 +170,7 @@ public class NFA implements NFAInterface {
         {
             for (NFAState state : currState.transitions.get('e')) // For each state we can get to on epsilon
             {
-                if (acceptHelper(state, s)) // Call other state without using strings for epsilon transitions
+                if (acceptHelper(state, s)) // recall self with same string / check if any ends returned true
                 {
                     return true;
                 }
@@ -224,6 +219,7 @@ public class NFA implements NFAInterface {
         for(NFAState state : states){
             if(name.equals(state.getName()) && state.finalState){
                 response = true;
+                break;
             }
         }
         return response;
@@ -241,6 +237,7 @@ public class NFA implements NFAInterface {
         for(NFAState state : states){
             if(name.equals(state.getName()) && state.startState){
                 response = true;
+                break;
             }
         }
         return response;
@@ -266,7 +263,7 @@ public class NFA implements NFAInterface {
      * @author Caitlyn
 	 * Traverses all epsilon transitions and determine
 	 * what states can be reached from s through e
-	 * @param s
+	 * @param s state
 	 * @return set of states that can be reached from s on epsilon trans.
 	 */
     @Override
@@ -281,8 +278,8 @@ public class NFA implements NFAInterface {
      * @author Caitlyn
 	 * Traverses all epsilon transitions and determine
 	 * what states can be reached from s through e
-     * @param set
-	 * @param s
+     * @param set states
+	 * @param s state
 	 * @return set of states that can be reached from s on epsilon trans.
 	 */
     public Set<NFAState> eClosureHelper(Set<NFAState> set, NFAState s) {
@@ -311,13 +308,17 @@ public class NFA implements NFAInterface {
         }
         LinkedHashSet<NFAState> startSet = new LinkedHashSet<NFAState>();
         startSet.add(startState);
-        for (NFAState state : eClosure(startState))
-        {
-            startSet.add(state);
-        }
+        startSet.addAll(eClosure(startState));
         return maxCopiesHelper(startSet, s);
     }
 
+    /**
+     * @author Olivia Hill
+     * Recursive portions of maxCopies that allows us to loop through the whole trace
+     * @param stateSet The states/string we have at a particular level of the string trace
+     * @param s Our string
+     * @return Max number of copies in any level of the trace
+     */
     private int maxCopiesHelper(LinkedHashSet<NFAState> stateSet, String s) // So many silly warnings
     {
         LinkedHashSet<NFAState> nextLevel = new LinkedHashSet<NFAState>();
@@ -330,7 +331,6 @@ public class NFA implements NFAInterface {
                 for (NFAState toState : state.transitions.get(s.charAt(0)))
                 {
                     nextLevel.addAll(eClosure(toState)); // Adds toState on symb and all states reachable by epsilon
-                    // TODO: Make sure it doesn't all duplicates
                 }
             } catch (NullPointerException npe) {}
 
@@ -395,8 +395,6 @@ public class NFA implements NFAInterface {
                         statePtr.transitions.get(onSymb).add(state); // Will add state if not already present
                         break;
                     }
-                    // TODO: Check for state in set that's not in our nfa? what to do if that happens...
-                    // Put it up in a hotel and tell it to wait for security clearance! - C
                 }
             }
         }
@@ -411,7 +409,6 @@ public class NFA implements NFAInterface {
                         toStateSet.add(state);
                         break;
                     }
-                    // TODO: Check for if toState isn't in our state set? ^
                 }
             }
             statePtr.transitions.put(onSymb, toStateSet); // Add transitions
