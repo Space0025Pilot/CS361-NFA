@@ -66,7 +66,7 @@ public class NFA implements NFAInterface {
     }
 
     /**
-     * @author Caitlyn
+     * @author Caitlyn & Olivia
 	 * Adds the initial state to the FA instance
 	 * @param name is the label of the start state
 	 * @return true if successful and false if no state with such name exists
@@ -282,10 +282,10 @@ public class NFA implements NFAInterface {
 	 * @param s state
 	 * @return set of states that can be reached from s on epsilon trans.
 	 */
-    public Set<NFAState> eClosureHelper(Set<NFAState> set, NFAState s) {
+    private Set<NFAState> eClosureHelper(Set<NFAState> set, NFAState s) {
         set.add(s);
-        if(s.transitions.containsKey('e')){
-            for(NFAState state : s.transitions.get('e')){
+        if (s.transitions.containsKey('e')) {
+            for (NFAState state : s.transitions.get('e')) {
                 set.add(state);
                 eClosureHelper(set, state);
             }
